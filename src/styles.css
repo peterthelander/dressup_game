@@ -1,4 +1,54 @@
-.App {
-  font-family: sans-serif;
+/* styles.css */
+
+/* Make the whole app a little more playful */
+body {
+  font-family: "Comic Sans MS", "Comic Neue", Arial, sans-serif;
+  background: linear-gradient(180deg, #fdf6f9 0%, #fff 100%);
+  color: #333;
+  margin: 0;
+  padding: 0;
   text-align: center;
+}
+
+/* Container around the game */
+.App {
+  padding: 20px;
+}
+
+/* Dress-up buttons */
+button {
+  background-color: #f9c5d5; /* pastel pink */
+  border: 2px solid #f48fb1;
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: #5a2a4d;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: #f48fb1;
+  color: white;
+}
+
+button:active {
+  background-color: #ec407a;
+  color: white;
+  transform: scale(0.97);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Score text */
+.score {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #6a1b9a;
 }
