@@ -60,40 +60,36 @@ export default function App() {
   }
 
   return (
-    <div style={{ fontFamily: "sans-serif", textAlign: "center", padding: 20 }}>
+    <div className="App">
       <h1>Dress-Up Game 🎀</h1>
       <button onClick={spinWheel}>🎡 Spin for Event</button>
       {event && (
         <h2>
-          Event: <span style={{ color: "purple" }}>{event.name}</span>
+          Event: <span className="event-name">{event.name}</span>
         </h2>
       )}
-      <div style={{ margin: "20px auto", width: 260 }}>
+      <div className="avatar-container">
         <GirlSVG equipped={equipped} />
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+      <div className="item-grid">
         {Object.entries(items).map(([slot, arr]) => (
-          <div key={slot} style={{ margin: 8 }}>
+          <div key={slot} className="slot">
             <strong>{slot}</strong>
             <div>
               {arr.map((item) => (
                 <button
                   key={item.name}
-                  style={{
-                    display: "block",
-                    margin: "4px auto",
-                    padding: "4px 8px",
-                    background:
-                      equipped[slot]?.name === item.name ? "#ddd" : "#fff",
-                  }}
+                  className={`item-button${
+                    equipped[slot]?.name === item.name ? " selected" : ""
+                  }`}
                   onClick={() => setEquipped({ ...equipped, [slot]: item })}
                 >
                   {item.name}
                 </button>
               ))}
               <button
-                style={{ marginTop: 4 }}
+                className="item-button none-button"
                 onClick={() => {
                   const copy = { ...equipped };
                   delete copy[slot];
@@ -108,9 +104,9 @@ export default function App() {
       </div>
 
       {event && (
-        <div style={{ marginTop: 20 }}>
+        <div className="score-section">
           <button onClick={checkScore}>Check Outfit ✅</button>
-          {score && <h3>Score: {score}</h3>}
+          {score && <h3 className="score">Score: {score}</h3>}
         </div>
       )}
     </div>
