@@ -13,6 +13,7 @@ body {
 /* Container around the game */
 .App {
   padding: 20px;
+  text-align: center;
 }
 
 /* Dress-up buttons */
@@ -43,6 +44,43 @@ button:active {
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Layout helpers moved from old inline styles */
+.avatar-container {
+  margin: 20px auto;
+  width: 260px;
+}
+
+.item-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.slot {
+  margin: 8px;
+}
+
+.item-button {
+  display: block;
+  margin: 4px auto;
+}
+
+.item-button.selected {
+  background: #ddd;
+}
+
+.none-button {
+  margin-top: 4px;
+}
+
+.score-section {
+  margin-top: 20px;
+}
+
+.event-name {
+  color: purple;
 }
 
 /* Score text */
