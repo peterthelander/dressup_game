@@ -674,7 +674,6 @@ function MiniPreview({ item }) {
 }
 
 // ---------- Avatar -------------------------------------------------------
-import React, { useEffect, useMemo, useState } from "react";
 
 /** Dress-Up MVP — single-file React component (no external CSS required)
  *  Self-contained. Click Run.
