@@ -1,6 +1,20 @@
 import React, { useMemo, useState } from "react";
 import "./styles.css";
 
+// Image-based avatar toggle + helpers
+const USE_IMAGE_AVATAR = true; // turn on image avatar
+const ASSET = (p) => process.env.PUBLIC_URL + p;
+
+// IDs that have thumbnails in /public/assets/girl
+const ASSET_IDS = new Set([
+  "dress_party_peach",
+  "dress_formal_lilac",
+  "top_teal",
+  "bottom_jeans",
+  "outer_raincoat",
+  "shoes_flats"
+]);
+
 /** Dress-Up Game — multi-pane layout (header • event • avatar+score • catalog)
  *  - Uses inline layout styles so it looks structured even without extra CSS
  *  - Imports styles.css so your custom styles still apply (buttons, colors, etc.)
@@ -237,7 +251,9 @@ export default function App() {
           <div style={card({ position: "relative" })}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <GirlSVG equipped={equippedItems} />
+                {USE_IMAGE_AVATAR
+                  ? <GirlImage equipped={equippedItems} />
+                  : <GirlSVG equipped={equippedItems} />}
               </div>
               <div>
                 <div style={{ color: "#64748B", fontSize: 14 }}>Score</div>
@@ -329,59 +345,28 @@ function Stars({ n }) {
 }
 
 function MiniPreview({ item }) {
-  const is = (t) => (item.tags || []).includes(t);
+  // Show an image thumb if we have an asset for this id
+  const folder =
+    item.slot === "dress" ? "dress" :
+    item.slot === "top" ? "top" :
+    item.slot === "bottom" ? "bottom" :
+    item.slot === "outer" ? "outer" :
+    item.slot === "shoes" ? "shoes" : null;
+
+  if (USE_IMAGE_AVATAR && folder && ASSET_IDS.has(item.id)) {
+    const src = ASSET(`/assets/girl/${folder}/${item.id}@2x.png`);
+    return <img src={src} alt={item.name} width={72} height={72} style={{ objectFit: "contain" }} />;
+  }
+
+  // Fallback: simple SVG shape (existing look)
   return (
     <svg viewBox="0 0 80 80" width={80} height={80}>
-      {item.slot === "dress" && (
-        <path d={
-          item.hem === "scallop"
-            ? "M40 18 L56 42 Q40 50 24 42 Z"
-            : "M32 18 h16 l12 24 h-40 z"
-        } fill={item.color} />
-      )}
-      {item.slot === "top" && (
-        <g>
-          <rect x="24" y="22" width="32" height="20" rx="6" fill={item.color} />
-          <path d="M24 36 h32" stroke="#fff" strokeOpacity="0.3" />
-          <path d="M32 22 q8 8 16 0" stroke="#fff" strokeOpacity="0.3" />
-        </g>
-      )}
-      {item.slot === "bottom" && (
-        <g>
-          <rect x="28" y="44" width="24" height="18" rx="5" fill={item.color} />
-          <path d="M28 53 h24" stroke="#fff" strokeOpacity="0.3" />
-        </g>
-      )}
-      {item.slot === "outer" && (
-        <g>
-          <rect x="20" y="20" width="40" height="32" rx="8" fill={item.color} />
-          <path d="M40 20 v32" stroke="#fff" strokeOpacity="0.3" />
-        </g>
-      )}
-      {item.slot === "shoes" && (
-        <g>
-          <ellipse cx="33" cy="66" rx="8" ry="6" fill={item.color} />
-          <ellipse cx="47" cy="66" rx="8" ry="6" fill={item.color} />
-          <path d="M25 69 h18" stroke="#000" strokeOpacity="0.2" />
-          <path d="M37 69 h18" stroke="#000" strokeOpacity="0.2" />
-        </g>
-      )}
-      {item.slot === "accessory" && (
-        is("sunhat") ? (
-          <path d="M40 30 a12 12 0 0 1 12 12 h-24 a12 12 0 0 1 12-12zm-20 12 h40" fill={item.color} stroke={item.color} />
-        ) : is("scarf") ? (
-          <path d="M28 40 q12 12 24 0 q-4 12 -12 14 q-8 -2 -12 -14z" fill={item.color} />
-        ) : is("gloves") ? (
-          <g fill={item.color}><rect x="20" y="50" width="12" height="10" rx="4" /><rect x="48" y="50" width="12" height="10" rx="4" /></g>
-        ) : is("backpack") ? (
-          <g>
-            <rect x="28" y="26" width="24" height="28" rx="6" fill={item.color} />
-            <path d="M28 30 q-6 10 0 20 M52 30 q6 10 0 20" stroke="#fff" strokeOpacity="0.3" />
-          </g>
-        ) : (
-          <circle cx="40" cy="40" r="10" fill={item.color} />
-        )
-      )}
+      {item.slot === "dress" && (<path d="M40 20 L55 40 Q40 48 25 40 Z" fill={item.color} />)}
+      {item.slot === "top" && (<rect x="25" y="22" width="30" height="18" rx="4" fill={item.color} />)}
+      {item.slot === "bottom" && (<rect x="28" y="40" width="24" height="18" rx="4" fill={item.color} />)}
+      {item.slot === "outer" && (<rect x="20" y="20" width="40" height="28" rx="6" fill={item.color} />)}
+      {item.slot === "shoes" && (<><ellipse cx="33" cy="66" rx="8" ry="6" fill={item.color} /><ellipse cx="47" cy="66" rx="8" ry="6" fill={item.color} /></>)}
+      {item.slot === "accessory" && (<circle cx="40" cy="40" r="10" fill={item.color} />)}
       {item.slot === "gear" && (<rect x="30" y="30" width="20" height="20" rx="4" fill={item.color} />)}
       {item.slot === "makeup" && (<circle cx="40" cy="40" r="8" fill={item.color} opacity={0.3} />)}
     </svg>
@@ -389,6 +374,64 @@ function MiniPreview({ item }) {
 }
 
 // ---------- Avatar -------------------------------------------------------
+function GirlImage({ equipped }) {
+  const W = 240, H = 360;
+  const srcs = [];
+  const push = (p) => p && srcs.push(p);
+  const file = (folder, id) => ASSET(`/assets/girl/${folder}/${id}@2x.png`);
+
+  // hair set (fixed for now; matches uploaded files)
+  const hairKey = "blonde";
+
+  // base layers
+  push(ASSET(`/assets/girl/hair/${hairKey}_back@2x.png`));
+  push(ASSET(`/assets/girl/body@2x.png`));
+
+  // clothes
+  if (equipped.dress) {
+    push(file("dress", equipped.dress.id));
+  } else {
+    if (equipped.top)    push(file("top", equipped.top.id));
+    if (equipped.bottom) push(file("bottom", equipped.bottom.id));
+  }
+
+  // outerwear
+  if (equipped.outer) push(file("outer", equipped.outer.id));
+
+  // shoes (optional overlay)
+  if (equipped.shoes) push(file("shoes", equipped.shoes.id));
+
+  // gear by tags
+  if (equipped.gear?.tags?.includes("helmet")) push(ASSET(`/assets/girl/gear/helmet@2x.png`));
+  if (equipped.gear?.tags?.includes("mask"))   push(ASSET(`/assets/girl/gear/mask@2x.png`));
+  if (equipped.gear?.tags?.includes("fins"))   push(ASSET(`/assets/girl/gear/fins@2x.png`));
+
+  // accessories (tiara vs necklace by tag)
+  if (equipped.accessory?.tags?.includes("tiara")) {
+    push(ASSET(`/assets/girl/accessories/tiara@2x.png`));
+  } else if (equipped.accessory) {
+    push(ASSET(`/assets/girl/accessories/necklace@2x.png`));
+  }
+
+  // hair front
+  push(ASSET(`/assets/girl/hair/${hairKey}_front@2x.png`));
+
+  // preload to avoid flicker
+  React.useEffect(() => {
+    const imgs = srcs.map((s) => { const im = new Image(); im.src = s; return im; });
+    return () => imgs.forEach(im => (im.src = ""));
+  }, [srcs.join("|")]);
+
+  return (
+    <div style={{ width: W, height: H, position: "relative" }}>
+      {srcs.map((src, i) => (
+        <img key={i} src={src} alt="" draggable={false}
+             style={{ width: W, height: H, position: "absolute", left: 0, top: 0 }} />
+      ))}
+    </div>
+  );
+}
+
 function GirlSVG({ equipped }) {
   const skin = "#FFD9C0";
   const hair = "#F2C761"; // warm blonde
